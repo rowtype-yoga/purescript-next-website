@@ -80,9 +80,9 @@ navigation = do
               }
           $ icon siPurescript { style: css { color: getColorValue theme "neutral" }, size: "3rem" }
       , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
-          [ { onClick: dispatchRoute "/pursuit", title: "Getting started" }
-          , { onClick: dispatchRoute "/pursuit", title: "Try Purescript" }
-          , { onClick: dispatchRoute "/pursuit", title: "Pursuit" }
+          [ { onClick: dispatchRoute "/packages", title: "Getting started" }
+          , { onClick: dispatchRoute "/packages", title: "Try Purescript" }
+          , { onClick: dispatchRoute "/packages", title: "Packages" }
           ]
       , el NextUI.navbarContent {}
           [ el NextUI.navbarLink
