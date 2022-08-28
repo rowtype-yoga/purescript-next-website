@@ -23,17 +23,6 @@ type AppProps props =
   , pageProps :: props
   }
 
-backgroundImage isDark =
-  if isDark then
-    """
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(0, 0, 139, 0.75) 0% 10%, #0000 70% 80%),
-      radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(30, 144, 255,0.5) 0% 10%,#0000 90% 90%);
-      """
-  else
-    """
-      radial-gradient(65rem 65rem at left 70rem top 40rem, rgba(0, 0, 139, 0.75) 0% 10%,#0000 70% 80%),
-      radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(0, 191, 255, 0.25) 0% 10%,#0000 90% 90%)
-      """
 
 mkApp :: forall props. Effect (EffectFn1 (AppProps props) React.JSX)
 mkApp = do

@@ -24,10 +24,6 @@ mkDocument = React.component "Document" \_ -> do
               }
           , R.body
               { className: "font-sans antialiased leading-normal tracking-wider bg-slate-200"
-              , style: css
-                  { height: "100vh"
-                  , width: "100vw"
-                  }
               , children:
                   [ N.main {}
                   , N.nextScript {}

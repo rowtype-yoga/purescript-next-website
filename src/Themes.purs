@@ -30,7 +30,7 @@ mkDark = createTheme
           }
       , space: {}
       , fonts:
-          { sans: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
+          { sans: "Manrope, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
           , mono: "Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono'"
           }
       }
@@ -49,7 +49,7 @@ mkLight = createTheme
           , primaryBorder: "$blue300"
           , primaryBorderHover: "$blue600"
           , primarySolidHover: "$blue400"
-          , primarySolidContrast: "$black"
+          , primarySolidContrast: "$blue600"
           , primaryShadow: "$blue500"
           , gradient: "linear-gradient(112deg, $blue100 -25%, $pink500 -10%, $purple500 80%)"
           , link: "$black100"
@@ -57,7 +57,7 @@ mkLight = createTheme
           }
       , space: {}
       , fonts:
-          { sans: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
+          { sans: "Manrope, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;"
           , mono: "Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono'"
           }
       }
