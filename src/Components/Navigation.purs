@@ -2,32 +2,28 @@ module Components.Navigation (navigation) where
 
 import Prelude
 
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..))
 import Data.Traversable (traverse_)
 import Data.Tuple.Nested ((/\))
 import Debug (spy)
-import Effect.Class.Console (log)
 import Next.Router (useRouter)
 import Next.Router as Router
 import NextUI.NextUI (switch, useTheme)
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM.Events (targetChecked)
-import React.Basic.DOM.Simplified.Generated as RS
 import React.Basic.Events (handler)
 import React.Basic.Hooks (Component, component, useEffect, useState')
 import React.Basic.Hooks as React
-import React.Icons (icon, icon_)
+import React.Icons (icon)
 import React.Icons.Si (siDiscord, siDiscourse, siGithub, siPurescript)
 import React.Util (el)
 import Themes (getColorValue)
 import Web.DOM.Document (documentElement)
 import Web.DOM.Element as DOMEL
-import Web.DOM.ParentNode (QuerySelector(..), querySelector)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (toDocument)
 import Web.HTML.Window (document)
-
 
 navigation :: Component Unit
 navigation = component "Navbar" \_props -> React.do
@@ -51,19 +47,10 @@ navigation = component "Navbar" \_props -> React.do
             { onClick: dispatchRoute $ "/"
             }
         $ icon siPurescript { style: css { color: getColorValue theme "neutral" }, size: "3rem" }
-    , el NextUI.navbarContent { hideIn: "xs" }
-        [ el NextUI.navbarLink
-            { onClick: dispatchRoute $ "/pursuit"
-            }
-            $ el NextUI.text { size: "$xl", color: getColorValue theme "neutral" } "Getting started"
-        , el NextUI.navbarLink
-            { onClick: dispatchRoute $ "/pursuit"
-            }
-            $ el NextUI.text { size: "$xl", color: getColorValue theme "neutral"} "Try Purescript"
-        , el NextUI.navbarLink
-            { onClick: dispatchRoute $ "/pursuit"
-            }
-            $ el NextUI.text { size: "$xl", color: getColorValue theme "neutral" } "Pursuit"
+    , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
+        [ { onClick: dispatchRoute "/pursuit", title: "Getting started" }
+        , { onClick: dispatchRoute "/pursuit", title: "Try Purescript" }
+        , { onClick: dispatchRoute "/pursuit", title: "Pursuit" }
         ]
     , el NextUI.navbarContent {}
         [ el NextUI.navbarLink
@@ -83,3 +70,9 @@ navigation = component "Navbar" \_props -> React.do
         , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
         ]
     ]
+  where
+  mkLink theme { onClick, title } =
+    el NextUI.navbarLink
+      { onClick
+      }
+      $ el NextUI.text { size: "$xl", color: getColorValue theme "neutral" } title
