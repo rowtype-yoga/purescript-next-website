@@ -42,8 +42,8 @@ mkBackgroundImage isDark =
       """
   else
     """
-      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255, 0.45) 0% 10%,#fff0 90% 90%),
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(32, 178, 170, 0.45) 0% 10%,#fff0 70% 80%);
+      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255, 0.30) 0% 10%,#fff0 90% 90%),
+      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(32, 178, 170, 0.35) 0% 10%,#fff0 70% 80%);
       """
 
 foreign import isDarkDefault_ :: Effect Boolean
