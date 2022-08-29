@@ -23,7 +23,6 @@ type AppProps props =
   , pageProps :: props
   }
 
-
 mkApp :: forall props. Effect (EffectFn1 (AppProps props) React.JSX)
 mkApp = do
   context /\ settingsProvider <- mkSettingsProvider
@@ -40,10 +39,13 @@ mkApp = do
             $ el nextThemesProvider
                 { defaultTheme: "system"
                 , attribute: "class"
+                , storageKey: "theme"
                 , value: { dark: (unsafeCoerce dark).className, light: (unsafeCoerce light).className }
                 }
             $ el nextUIProvider {}
-                [ loading unit
-                , nav unit
-                , el NextUI.container { css: css { height: "80vh" } } $ component props.pageProps
+                [ nav unit
+                , el NextUI.container { css: css { height: "80vh" } }
+                    [ loading unit
+                    , component props.pageProps
+                    ]
                 ]

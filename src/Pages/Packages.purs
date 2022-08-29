@@ -149,7 +149,7 @@ mkPackages = do
     pure $ el NextUI.container {} $
       [ el NextUI.row {} $ R.h1' "Packages"
       , el NextUI.row {} $ el NextUI.input
-          { initialValue: spy "searchInput" state.searchInput
+          { initialValue: state.searchInput
           , clearable: true
           , bordered: true
           , contentLeft: icon_ tbSearch
