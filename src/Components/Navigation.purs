@@ -42,8 +42,8 @@ mkBackgroundImage isDark =
       """
   else
     """
-      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(32, 178, 170, 0.25) 0% 10%,#0000 90% 90%),
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(30, 144, 255, 0.25) 0% 10%,#0000 70% 80%);
+      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255, 0.45) 0% 10%,#fff0 90% 90%),
+      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(32, 178, 170, 0.45) 0% 10%,#fff0 70% 80%);
       """
 
 foreign import isDarkDefault_ :: Effect Boolean
@@ -101,7 +101,9 @@ navigation = do
               }
               $ icon siGithub { style: css { color: getColorValue theme "neutral" }, size: "1.5rem" }
           , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
+          
           ]
+          , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
       ]
   where
   mkLink theme { onClick, title, isActive } =
