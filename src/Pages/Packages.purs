@@ -10,7 +10,7 @@ import Prelude
 import Components.Page as Page
 import Control.Monad.Except (except)
 import Data.Array as Array
-import Data.Either (Either(..))
+import Data.Either (Either(..), either)
 import Data.Eq ((/=))
 import Data.Eq.Generic (genericEq)
 import Data.Generic.Rep (class Generic)
@@ -18,7 +18,7 @@ import Data.Maybe (Maybe, maybe)
 import Data.Show.Generic (genericShow)
 import Data.Tuple.Nested ((/\))
 import Debug (spy)
-import Effect.Aff (Aff)
+import Effect.Aff (Aff, attempt)
 import Effect.Class (liftEffect)
 import Effect.Class.Console (log)
 import Effect.Exception (Error)
@@ -40,6 +40,7 @@ import React.Hooks.UseRemoteData (useRemoteDataDispatch)
 import React.Icons (icon_)
 import React.Icons.Tb (tbSearch)
 import React.Util (el)
+import Web.DOM.Document (doctype)
 import Yoga.JSON (class ReadForeign)
 import Yoga.JSON as YogaJson
 
@@ -56,9 +57,9 @@ type DeclarationR =
 
 type PackageR = (deprecated :: Boolean)
 
-type ModuleR = (module :: String )
+type ModuleR = (module :: String)
 
-data SearchInfo = Declaration { | DeclarationR } | Package { | PackageR } | Module { | ModuleR } 
+data SearchInfo = Declaration { | DeclarationR } | Package { | PackageR } | Module { | ModuleR }
 
 derive instance Generic SearchInfo _
 instance Eq SearchInfo where
@@ -111,8 +112,9 @@ reduce s (EditSearchField "") = s { searchInput = "", searchResult = RD.NotAsked
 reduce s (EditSearchField searchInput) = s { searchInput = searchInput }
 
 getSearchResult :: { searchQuery :: String } -> Aff (Either SearchError (Array SearchResult))
-getSearchResult { searchQuery } = do
-  let url = "http://localhost:3000/search?q=" <> (maybe searchQuery identity $ encodeURIComponent searchQuery)
+getSearchResult { searchQuery } = mapAffErrorToSearchError $ do
+  let query = maybe searchQuery identity $ encodeURIComponent searchQuery
+  let url = "http://localhost:3000/search?q=" <> query
   { status, text, json } ← fetch url
     { method: GET
     , headers: { "Accept": "application/json" }
@@ -125,6 +127,9 @@ getSearchResult { searchQuery } = do
       body <- text
       log $ "Got invalid response [" <> (show statusCode) <> "]:\n" <> body
       pure $ Left SearchError
+  where
+  mapAffErrorToSearchError aff =
+    (either (pure $ Left SearchError) (identity)) <$> (attempt aff)
 
 mkPackages :: Page.Component Props
 mkPackages = do
@@ -154,9 +159,10 @@ mkPackages = do
           , bordered: true
           , contentLeft: icon_ tbSearch
           , placeholder: "Search"
+          , "aria-label": "Search"
           , size: "xl"
           , type: "search"
-          , width: "600px"
+          , fullWidth: true
           , onChange: handler targetValue (maybe (pure unit) (EditSearchField >>> dispatch))
           }
           React.empty
@@ -167,22 +173,22 @@ mkPackages = do
 
   where
   renderSearchResult :: SearchResult -> JSX
-  renderSearchResult { info: Declaration { "module": m, title }, package } = el NextUI.row {} [
-     el NextUI.col {} m
+  renderSearchResult { info: Declaration { "module": m, title }, package } = el NextUI.row {}
+    [ el NextUI.col {} m
     , el NextUI.col {} title
-  ]
-  renderSearchResult { info: Package { deprecated }, package } = el NextUI.row {} [
-     el NextUI.col {} package
+    ]
+  renderSearchResult { info: Package { deprecated }, package } = el NextUI.row {}
+    [ el NextUI.col {} package
     , el NextUI.col {} $ if deprecated then "deprecated" else ""
-  ]
-  renderSearchResult { info: Module { "module": m }, package } = el NextUI.row {} [
-     el NextUI.col {} package
+    ]
+  renderSearchResult { info: Module { "module": m }, package } = el NextUI.row {}
+    [ el NextUI.col {} package
     , el NextUI.col {} $ m
-  ]
+    ]
 
   renderSearchResults :: RD.RemoteData SearchError (Array SearchResult) -> Array JSX
   renderSearchResults (RD.Success searchResults) = searchResults <#> renderSearchResult
-  renderSearchResults (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text {} "Uh oh"
+  renderSearchResults (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text { color: "error" } "Uh oh"
   renderSearchResults RD.Loading = Array.singleton $ el NextUI.row {} $ el NextUI.loading {} React.empty
   renderSearchResults RD.NotAsked = Array.singleton $ el NextUI.row {} $ el NextUI.text {} ""
 -- getServerSideProps :: forall ctx. EffectFn1 ctx (Promise { props :: Props })
