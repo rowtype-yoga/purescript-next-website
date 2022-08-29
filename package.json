@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "hot": "next dev -p 4040",
+    "dev": "next dev -p 4040",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
