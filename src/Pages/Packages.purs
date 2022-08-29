@@ -135,7 +135,7 @@ mkPackages :: Page.Component Props
 mkPackages = do
 
   reducer ← mkReducer reduce # liftEffect
-  Page.component "Pursuit" \env props -> React.do
+  Page.component "Packages" \env props -> React.do
     router <- useRouter
     let
       q :: { q :: String }
@@ -178,7 +178,7 @@ mkPackages = do
     , el NextUI.col {} title
     ]
   renderSearchResult { info: Package { deprecated }, package } = el NextUI.row {}
-    [ el NextUI.col {} package
+    [ el NextUI.col {} $ el NextUI.link { href: "/packages/" <> package } $ package -- TODO: Use router
     , el NextUI.col {} $ if deprecated then "deprecated" else ""
     ]
   renderSearchResult { info: Module { "module": m }, package } = el NextUI.row {}
@@ -187,6 +187,7 @@ mkPackages = do
     ]
 
   renderSearchResults :: RD.RemoteData SearchError (Array SearchResult) -> Array JSX
+  renderSearchResults (RD.Success []) = Array.singleton $ el NextUI.row {} $ el NextUI.text {} "No package found"
   renderSearchResults (RD.Success searchResults) = searchResults <#> renderSearchResult
   renderSearchResults (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text { color: "error" } "Uh oh"
   renderSearchResults RD.Loading = Array.singleton $ el NextUI.row {} $ el NextUI.loading {} React.empty

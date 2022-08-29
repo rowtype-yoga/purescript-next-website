@@ -99,9 +99,9 @@ navigation = do
               }
               $ icon siGithub { style: css { color: getColorValue theme "neutral" }, size: "1.5rem" }
           , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
-          
+
           ]
-          , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
+      , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
       ]
   where
   mkLink theme { onClick, title, isActive } =
