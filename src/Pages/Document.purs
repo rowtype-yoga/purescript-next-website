@@ -2,10 +2,7 @@ module Pages.Document (mkDocument) where
 
 import Prelude
 
-import Debug (spy)
 import Next.Document as N
-import NextUI.NextUI (useTheme)
-import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 
@@ -20,6 +17,7 @@ mkDocument = React.component "Document" \_ -> do
           [ N.head
               { children:
                   [ R.title_ [ R.text "Purescript - A functional programming language for the web" ]
+                  , R.link { rel: "icon", href: "data:;base64,iVBORw0KGgo=" }
                   ]
               }
           , R.body
