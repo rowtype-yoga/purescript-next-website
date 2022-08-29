@@ -12,7 +12,7 @@ import Effect (Effect)
 import Effect.Uncurried (EffectFn1, mkEffectFn1)
 import NextUI.NextUI (nextThemesProvider, nextUIProvider)
 import NextUI.NextUI as NextUI
-import React.Basic.DOM (css)
+import React.Basic as R
 import React.Basic.Hooks as React
 import React.Util (el)
 import Themes as Themes
@@ -44,7 +44,8 @@ mkApp = do
                 }
             $ el nextUIProvider {}
                 [ nav unit
-                , el NextUI.container { css: css { height: "80vh" } }
+                , el NextUI.spacer { y: 3 } R.empty
+                , el NextUI.container {}
                     [ loading unit
                     , component props.pageProps
                     ]
