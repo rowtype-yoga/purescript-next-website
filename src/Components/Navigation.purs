@@ -4,15 +4,12 @@ module Components.Navigation
   ) where
 
 import Prelude
-import Web.HTML.HTMLElement
+import Web.HTML.HTMLElement (toElement)
 
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Maybe (Maybe(..), maybe)
-import Data.Traversable (for_, traverse, traverse_)
-import Data.Tuple.Nested ((/\))
-import Debug (spy)
+import Data.Traversable (traverse_)
 import Effect (Effect)
-import Effect.Uncurried (runEffectFn1)
 import Next.Router (useRouter)
 import Next.Router as Router
 import NextUI.NextUI (switch, useNextTheme, useTheme)
@@ -20,7 +17,7 @@ import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM.Events (targetChecked)
 import React.Basic.Events (handler)
-import React.Basic.Hooks (Component, component, useEffect, useEffectOnce, useState')
+import React.Basic.Hooks (Component, component, useEffect)
 import React.Basic.Hooks as React
 import React.Icons (icon)
 import React.Icons.Si (siDiscord, siDiscourse, siGithub, siPurescript)
@@ -34,6 +31,7 @@ import Web.HTML.HTMLDocument as Doc
 import Web.HTML.Window (document)
 
 -- radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(30, 144, 255,0.5) 0% 10%,#0000 90% 90%),
+mkBackgroundImage :: Boolean -> String
 mkBackgroundImage isDark =
   if isDark then
     """
