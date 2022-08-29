@@ -20,7 +20,7 @@ type Props =
 mkTry :: Page.Component Props
 mkTry = do
 
-  Page.component "Try Purescript" \env props -> React.do
+  Page.component "Try PureScript" \env props -> React.do
     pure $ el NextUI.container {} $
       [ el NextUI.row {} $ R.h1' "Getting Started"
       ]

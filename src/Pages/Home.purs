@@ -24,7 +24,7 @@ mkHome = do
               { h1: true
               , size: 60
               }
-              "Purescript "
+              "PureScript "
 
           ]
 
