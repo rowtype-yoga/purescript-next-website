@@ -35,13 +35,13 @@ mkBackgroundImage :: Boolean -> String
 mkBackgroundImage isDark =
   if isDark then
     """
-      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255,0.55) 0% 10%,#0000 90% 90%),
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(0, 0, 139, 0.75) 0% 10%, #0000 70% 80%);
+      radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(37,246,255, 0.5) 5%,#0000 50%),
+      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(24, 15, 102, 1) 5%, #0000 50%);
       """
   else
     """
-      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255, 0.30) 0% 10%,#fff0 90% 90%),
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(32, 178, 170, 0.35) 0% 10%,#fff0 70% 80%);
+      radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(51,138, 255, 0.75) 5%, rgba(255,255,255,0) 50%),
+      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(33,170,231, 0.75) 5%, rgba(255,255,255,0) 50%);
       """
 
 foreign import isDarkDefault_ :: Effect Boolean
