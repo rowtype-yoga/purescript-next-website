@@ -9,6 +9,7 @@ foreign import data ThemeValue :: Type
 
 foreign import getColorValue :: Theme -> String -> ThemeValue
 
+-- https://color.adobe.com/Adjacent-Water-color-theme-10314234/
 -- /* Color Theme Swatches in Hex */
 -- .Adjacent-Water-1-hex { color: #180F66; }
 -- .Adjacent-Water-2-hex { color: #1A33B2; }
