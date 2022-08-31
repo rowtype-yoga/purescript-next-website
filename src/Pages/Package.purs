@@ -21,7 +21,7 @@ mkPackage :: Page.Component Props
 mkPackage =
   Page.component "Package" \_env _props -> React.do
     router <- useRouter
-    let ({ packageName, packageVersion }) = query router
+    let { packageName, packageVersion } = query router
     pure $ el NextUI.container {} $
       [ el NextUI.row {} $ R.h1_ [ R.text "Package" ]
       , el NextUI.row {} $ R.text $ "Name: " <> packageName

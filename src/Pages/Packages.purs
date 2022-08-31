@@ -8,20 +8,18 @@ module Pages.Packages
 import Prelude
 
 import Components.Page as Page
+import Components.Select as Select
 import Control.Monad.Except (except)
 import Data.Array as Array
 import Data.Either (Either(..), either)
-import Data.Eq ((/=))
 import Data.Eq.Generic (genericEq)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe, maybe)
 import Data.Show.Generic (genericShow)
 import Data.Tuple.Nested ((/\))
-import Debug (spy)
-import Effect.Aff (Aff, attempt)
+import Effect.Aff (Aff, Milliseconds(..), attempt, delay)
 import Effect.Class (liftEffect)
 import Effect.Class.Console (log)
-import Effect.Exception (Error)
 import Fetch (Method(..), fetch)
 import Fetch.Yoga.Json (fromJSON)
 import Foreign (ForeignError(..))
@@ -34,18 +32,18 @@ import NextUI.NextUI as NextUI
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.DOM.Simplified.Generated as R
 import React.Basic.Events (handler)
-import React.Basic.Hooks (type (/\), JSX, mkReducer, useEffect)
+import React.Basic.Hooks (JSX, mkReducer, useEffect, useState')
 import React.Basic.Hooks as React
 import React.Hooks.UseRemoteData (useRemoteDataDispatch)
 import React.Icons (icon_)
 import React.Icons.Tb (tbSearch)
 import React.Util (el)
-import Web.DOM.Document (doctype)
 import Yoga.JSON (class ReadForeign)
 import Yoga.JSON as YogaJson
 
 type Props =
   { header :: String
+  , baseUrl :: String
   }
 
 type DeclarationR =
@@ -111,10 +109,10 @@ reduce s (UpdateSearchResult searchResult) =
 reduce s (EditSearchField "") = s { searchInput = "", searchResult = RD.NotAsked }
 reduce s (EditSearchField searchInput) = s { searchInput = searchInput }
 
-getSearchResult :: { searchQuery :: String } -> Aff (Either SearchError (Array SearchResult))
-getSearchResult { searchQuery } = mapAffErrorToSearchError $ do
+getSearchResult :: String -> { searchQuery :: String } -> Aff (Either SearchError (Array SearchResult))
+getSearchResult baseUrl { searchQuery } = mapAffErrorToSearchError $ do
   let query = maybe searchQuery identity $ encodeURIComponent searchQuery
-  let url = "http://localhost:3000/search?q=" <> query
+  let url = baseUrl <> "/search?q=" <> query
   { status, text, json } ← fetch url
     { method: GET
     , headers: { "Accept": "application/json" }
@@ -135,48 +133,64 @@ mkPackages :: Page.Component Props
 mkPackages = do
 
   reducer ← mkReducer reduce # liftEffect
-  Page.component "Packages" \env props -> React.do
+  select <- Select.mkSelect
+  Page.component "Packages" \{ pursuitUrl } props -> React.do
+    state /\ dispatch ← React.useReducer defaultState reducer
+    buttonState /\ setButtonState <- useState' Select.All
     router <- useRouter
     let
       q :: { q :: String }
       q = query router
 
       dispatchRoute = Router.push router
+      debounce = delay (Milliseconds 200.0)
 
-    state /\ dispatch ← React.useReducer defaultState reducer
-
-    remoteSearchResult ← useRemoteDataDispatch (dispatch <<< UpdateSearchResult) getSearchResult
+    { load } ← useRemoteDataDispatch (dispatch <<< UpdateSearchResult) \query -> debounce *> getSearchResult pursuitUrl query
 
     useEffect state.searchInput do
-      if state.searchInput /= "" then remoteSearchResult.load { searchQuery: state.searchInput } else pure unit
+      if state.searchInput /= "" then load { searchQuery: state.searchInput } else pure unit
       mempty
-    -- http://localhost:3000/search\?q
+
     pure $ el NextUI.container {} $
       [ el NextUI.row {} $ R.h1' "Packages"
-      , el NextUI.row {} $ el NextUI.input
-          { initialValue: state.searchInput
-          , clearable: true
-          , bordered: true
-          , contentLeft: icon_ tbSearch
-          , placeholder: "Search"
-          , "aria-label": "Search"
-          , size: "xl"
-          , type: "search"
-          , fullWidth: true
-          , onChange: handler targetValue (maybe (pure unit) (EditSearchField >>> dispatch))
-          }
-          React.empty
-      , el NextUI.row {} $ el NextUI.container {} $
+      , el NextUI.row {}
+          [ el NextUI.input
+              { initialValue: state.searchInput
+              , clearable: true
+              , bordered: true
+              , contentLeft: icon_ tbSearch
+              , placeholder: "Search"
+              , "aria-label": "Search"
+              , size: "xl"
+              , type: "search"
+              , fullWidth: true
+              , onChange: handler targetValue (maybe (pure unit) (EditSearchField >>> dispatch))
+              }
+              React.empty
+          , select { selected: buttonState, onSelect: setButtonState }
+          ]
+          , el NextUI.spacer { y: 1 } React.empty
+      , el NextUI.row {} $ el NextUI.container { gap:0, direction: "column"} $
           renderSearchResults state.searchResult
 
       ]
 
   where
   renderSearchResult :: SearchResult -> JSX
-  renderSearchResult { info: Declaration { "module": m, title }, package } = el NextUI.row {}
-    [ el NextUI.col {} m
-    , el NextUI.col {} title
+  renderSearchResult { info: Declaration { "module": m, title }, text, package } = React.fragment
+    [ el NextUI.row {}
+        [ el NextUI.card {}
+            [ el NextUI.cardHeader {} title
+            , el NextUI.cardBody {} text
+            , el NextUI.cardFooter {} [
+              el NextUI.text {} package 
+            , el NextUI.text {} m
+            ]
+            ]
+        ]
+    , el NextUI.spacer { y: 1 } React.empty
     ]
+
   renderSearchResult { info: Package { deprecated }, package } = el NextUI.row {}
     [ el NextUI.col {} $ el NextUI.link { href: "/packages/" <> package } $ package -- TODO: Use router
     , el NextUI.col {} $ if deprecated then "deprecated" else ""
