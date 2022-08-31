@@ -7,6 +7,7 @@ import Components.Navigation (navigation)
 import Components.Page (Component)
 import Context.Settings (mkSettingsProvider)
 import Control.Monad.Reader (runReaderT)
+import Data.Nullable (Nullable)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, mkEffectFn1)
@@ -26,11 +27,12 @@ type AppProps props =
 mkApp :: forall props. Effect (EffectFn1 (AppProps props) React.JSX)
 mkApp = do
   context /\ settingsProvider <- mkSettingsProvider
+  let pursuitUrl = "http://localhost:3000"
   loading <- mkLoading
   pure
     $ mkEffectFn1 \props ->
         do
-          component <- runReaderT props."Component" { settings: context }
+          component <- runReaderT props."Component" { settings: context, pursuitUrl }
           nav <- navigation
           dark <- Themes.mkDark
           light <- Themes.mkLight
