@@ -17,6 +17,7 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe, maybe)
 import Data.Show.Generic (genericShow)
 import Data.Tuple.Nested ((/\))
+import Debug (spy)
 import Effect.Aff (Aff, Milliseconds(..), attempt, delay)
 import Effect.Class (liftEffect)
 import Effect.Class.Console (log)
@@ -24,11 +25,13 @@ import Fetch (Method(..), fetch)
 import Fetch.Yoga.Json (fromJSON)
 import Foreign (ForeignError(..))
 import JSURI (encodeURIComponent)
+import Markdown.Markdown as Markdown
 import Network.RemoteData (RemoteData)
 import Network.RemoteData as RD
 import Next.Router (query, useRouter)
 import Next.Router as Router
 import NextUI.NextUI as NextUI
+import React.Basic.DOM (css)
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.DOM.Simplified.Generated as R
 import React.Basic.Events (handler)
@@ -36,7 +39,7 @@ import React.Basic.Hooks (JSX, mkReducer, useEffect, useState')
 import React.Basic.Hooks as React
 import React.Hooks.UseRemoteData (useRemoteDataDispatch)
 import React.Icons (icon_)
-import React.Icons.Tb (tbSearch)
+import React.Icons.Tb (tbBook2, tbMathFunction, tbPackage, tbSearch)
 import React.Util (el)
 import Yoga.JSON (class ReadForeign)
 import Yoga.JSON as YogaJson
@@ -161,7 +164,7 @@ mkPackages = do
               , contentLeft: icon_ tbSearch
               , placeholder: "Search"
               , "aria-label": "Search"
-              , size: "xl"
+              , size: "lg"
               , type: "search"
               , fullWidth: true
               , onChange: handler targetValue (maybe (pure unit) (EditSearchField >>> dispatch))
@@ -169,23 +172,38 @@ mkPackages = do
               React.empty
           , select { selected: buttonState, onSelect: setButtonState }
           ]
-          , el NextUI.spacer { y: 1 } React.empty
-      , el NextUI.row {} $ el NextUI.container { gap:0, direction: "column"} $
-          renderSearchResults state.searchResult
+      , el NextUI.spacer { y: 1 } React.empty
+      , el NextUI.row {} $ el NextUI.container { gap: 0, direction: "column" }
+          $ renderSearchResults
+          $ state.searchResult <#> Array.filter (isVisible buttonState)
 
       ]
 
   where
+
+  isVisible Select.All _ = true
+  isVisible Select.Code { info: Declaration _ } = true
+  isVisible Select.Code { info: Module _ } = true
+  isVisible Select.Package { info: Package _ } = true
+  isVisible _ _ = false
+
   renderSearchResult :: SearchResult -> JSX
-  renderSearchResult { info: Declaration { "module": m, title }, text, package } = React.fragment
+  renderSearchResult { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
     [ el NextUI.row {}
         [ el NextUI.card {}
-            [ el NextUI.cardHeader {} title
-            , el NextUI.cardBody {} text
-            , el NextUI.cardFooter {} [
-              el NextUI.text {} package 
-            , el NextUI.text {} m
-            ]
+            [ el NextUI.cardHeader {} [ renderDeclaration title ]
+            , el NextUI.cardBody {}
+                [ flip (maybe React.empty) maybeTypeText \typeText -> React.fragment
+                    [ R.code {} typeText
+                    , el NextUI.spacer { y: 1 } React.empty
+                    ]
+                , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ text
+                ]
+            , el NextUI.cardFooter {}
+                [ renderPackage package
+                , el NextUI.spacer { x: 1 } React.empty
+                , renderModule m
+                ]
             ]
         ]
     , el NextUI.spacer { y: 1 } React.empty
@@ -206,6 +224,16 @@ mkPackages = do
   renderSearchResults (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text { color: "error" } "Uh oh"
   renderSearchResults RD.Loading = Array.singleton $ el NextUI.row {} $ el NextUI.loading {} React.empty
   renderSearchResults RD.NotAsked = Array.singleton $ el NextUI.row {} $ el NextUI.text {} ""
+
+  renderModule :: String -> JSX
+  renderModule name = React.fragment [ icon_ tbBook2, el NextUI.text {} name ]
+
+  renderPackage :: String -> JSX
+  renderPackage name = React.fragment [ icon_ tbPackage, el NextUI.text {} name ]
+
+  renderDeclaration :: String -> JSX
+  renderDeclaration name = React.fragment [ icon_ tbMathFunction, el NextUI.text { css: css { padding: "0.5rem"}} name ]
+
 -- getServerSideProps :: forall ctx. EffectFn1 ctx (Promise { props :: Props })
 -- getServerSideProps =
 --   mkEffectFn1 $ fromAff
