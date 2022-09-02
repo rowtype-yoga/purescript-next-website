@@ -72,11 +72,11 @@ navigation = do
           pure mempty
         Nothing -> pure mempty
     pure $ el NextUI.navbar { isBordered: isDark, variant: "static" }
-      [ el NextUI.navbarBrand {}
+      [ el NextUI.navbarBrand { color: "neutral"}
           $ el NextUI.link
               { onClick: dispatchRoute $ "/"
               }
-          $ icon siPurescript { style: css { color: getColorValue theme "neutral" }, size: "3rem" }
+          $ icon siPurescript { size: "3rem" }
       , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
           [ { onClick: dispatchRoute "/getting-started", title: "Getting started", isActive: currentRoute == "/getting-started" }
           , { onClick: dispatchRoute "/try", title: "Try", isActive: currentRoute == "/try" }
@@ -85,22 +85,23 @@ navigation = do
       , el NextUI.navbarContent {}
           [ el NextUI.navbarLink
               { href: "https://purescript.org/chat"
+              , target: "_blank"
               }
-              $ icon siDiscord { style: css { color: getColorValue theme "neutral" }, size: "1.5rem" }
+              $ icon siDiscord { style: css { color: "neutral" }, size: "1.5rem" }
           , el NextUI.navbarLink
               { href: "https://discourse.purescript.org/"
               , target: "_blank"
               }
-              $ icon siDiscourse { style: css { color: getColorValue theme "neutral" }, size: "1.5rem" }
+              $ icon siDiscourse { style: css { color: "neutral" }, size: "1.5rem" }
           , el NextUI.navbarLink
               { href: "https://github.com/purescript/purescript"
               , target: "_blank"
               }
-              $ icon siGithub { style: css { color: getColorValue theme "neutral" }, size: "1.5rem" }
-          , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
+              $ icon siGithub { style: css { color: "neutral" }, size: "1.5rem" }
+          , el switch { checked: isDark, css: css { color: "neutral"}, onChange: handler targetChecked $ traverse_ setDark } ""
 
           ]
-      , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
+      , el NextUI.navbarToggle { hideIn: "mdMax"} React.empty -- [TODO] Find out why it is not hiding
       ]
   where
   mkLink theme { onClick, title, isActive } =
@@ -109,4 +110,4 @@ navigation = do
       , isActive
       , variant: "underline"
       }
-      $ el NextUI.text { size: "$xl", color: getColorValue theme "neutral" } title
+      $ el NextUI.text { size: "$xl", color: "neutral" } title
