@@ -35,8 +35,7 @@ mkBackgroundImage :: Boolean -> String
 mkBackgroundImage isDark =
   if isDark then
     """
-      radial-gradient(25rem 25rem at left 15rem top 20rem, rgba(30, 144, 255,0.55) 0% 10%,#0000 90% 90%),
-      radial-gradient(45rem 45rem at left 70rem top 40rem, rgba(0, 0, 139, 0.75) 0% 10%, #0000 70% 80%);
+      radial-gradient(40% 40% at 80% 20%, #05C7F2CC 1%, #0597F200 100%),radial-gradient(50% 60% at 25% 75%, #0597F2DD 0%, #3866F200 100%),radial-gradient(40% 40% at 0% 50%, #FFFFFFAA 1%, #05C7F200 100%),radial-gradient(30% 30% at 20% 40%, #6F04D9 0%, #1B027300 100%),radial-gradient(60% 70% at 50% 30%, #3866F2 25%, #1B027300 100%),linear-gradient(135deg, #000000FF 0%, #1B0273 100%)
       """
   else
     """
