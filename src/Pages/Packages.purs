@@ -190,7 +190,7 @@ mkPackages = do
   renderSearchResult :: SearchResult -> JSX
   renderSearchResult { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
     [ el NextUI.row {}
-        [ el NextUI.card {}
+        [ el NextUI.card {css: css { background: "$overlay" }}
             [ el NextUI.cardHeader {} [ renderDeclaration title ]
             , el NextUI.cardBody {}
                 [ flip (maybe React.empty) maybeTypeText \typeText -> React.fragment

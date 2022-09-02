@@ -6,13 +6,15 @@ import Components.Page as Page
 import Control.Promise (Promise, fromAff)
 import Effect.Aff (Aff)
 import Effect.Uncurried (EffectFn1, mkEffectFn1)
+import Next.Router as Router
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
+import React.Basic.DOM.Simplified.Generated as R
+import React.Basic.Hooks as React
 import React.Icons (icon)
 import React.Icons.Si (siPurescript)
 import React.Util (el)
 import Themes (getColorValue)
-import React.Basic.Hooks as React
 
 type Props =
   { header :: String
@@ -20,35 +22,37 @@ type Props =
 
 mkHome :: Page.Component Props
 mkHome = do
-Page.component "Home" \env props ->
+  Page.component "Home" \env props ->
     React.do
       { theme } <- NextUI.useTheme
       router <- Router.useRouter
       let
         dispatchRoute = Router.push router
-      pure $ el NextUI.container { fluid: true, css: css {  } }
+      pure $ el NextUI.container { display: "flex", css: css { minHeight: "70vh" }, alignItems: "center" }
         $ el NextUI.card
-            { css: css { height: "100%", background: "$transparentBackground" }
+            { css: css { height: "100%", background: "$overlay", position: "relative", top: "50%" }
             }
             [ el NextUI.cardBody {}
-                $ el NextUI.container {}
-                $ el NextUI.row { css: css { height: "100%" } }
-                    [ el NextUI.col {  }
-                        [ el NextUI.row {}
-                            [ icon siPurescript { style: css { color: "$primarySolidContrast", minWidth: "5rem" }, size: "5rem" }
+                $ el NextUI.container { display: "flex", justify: "space-evenly"}
+                    [ R.div {} $ el NextUI.container { display: "flex", direction:"column" }
+                        [ R.div { style: css {display: "flex", alignItems: "center" } } 
+                            [ icon siPurescript { style: css { color: "primary", strokeWidth: "0.5", fontSize: "6rem" } }
                             , el NextUI.spacer {} React.empty
                             , el NextUI.text
                                 { h1: true
+                                , css: { letterSpacing: "0.002em" }
+                                , size: "$7xl"
+                                , weight: "black"
                                 }
                                 "PureScript "
                             ]
-                        , el NextUI.row {} $ el NextUI.text { size: "$xl" } "A fast, powerful functional language"
+                        , R.div {} $ el NextUI.text { h2: true, size: "$2xl", weight: "normal" } "A fast and elegant functional programming language"
                         ]
-                    , el NextUI.col { align: "center", content: "center", css: css { height: "100%"}} 
-                        $ el NextUI.button { shadow: false, color: "primary", css: css { minHeight: "5rem", minWidth: "50%" }, onClick: dispatchRoute "/getting-started" }
-                        $ el NextUI.text { size: "$3xl", color: "secondary", css: css { fontWeight: "$bold" } } "Get started"
+                    , R.div { style: css { display: "flex", alignItems: "center"} }
+                        $ R.div {}
+                        $ el NextUI.button { shadow: false, css: css { minHeight: "5rem", padding: "3rem"}, onClick: dispatchRoute "/getting-started" }
+                        $ el NextUI.text { size: "$3xl", color: "white", css: css { fontWeight: "$bold" } } "Get started"
                     ]
-
             ]
 
 fetchData :: forall ctx. ctx -> Aff Props
