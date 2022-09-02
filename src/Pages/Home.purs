@@ -20,18 +20,36 @@ type Props =
 
 mkHome :: Page.Component Props
 mkHome = do
-  Page.component "Home" \env props -> React.do
-    { theme } <- NextUI.useTheme
-    pure $ el NextUI.container { fluid: true, css: css { height: "100%" } }
-      $ el NextUI.row { justify: "center", align: "center", css: css { height: "100%" } }
-          [ icon siPurescript { style: css { color: getColorValue theme "primarySolidContrast", minWidth: "5rem" }, size: "5rem" }
-          , el NextUI.spacer {} React.empty
-          , el NextUI.text
-              { h1: true
-              , size: "4rem"
-              }
-              "PureScript "
-          ]
+Page.component "Home" \env props ->
+    React.do
+      { theme } <- NextUI.useTheme
+      router <- Router.useRouter
+      let
+        dispatchRoute = Router.push router
+      pure $ el NextUI.container { fluid: true, css: css {  } }
+        $ el NextUI.card
+            { css: css { height: "100%", background: "$transparentBackground" }
+            }
+            [ el NextUI.cardBody {}
+                $ el NextUI.container {}
+                $ el NextUI.row { css: css { height: "100%" } }
+                    [ el NextUI.col {  }
+                        [ el NextUI.row {}
+                            [ icon siPurescript { style: css { color: "$primarySolidContrast", minWidth: "5rem" }, size: "5rem" }
+                            , el NextUI.spacer {} React.empty
+                            , el NextUI.text
+                                { h1: true
+                                }
+                                "PureScript "
+                            ]
+                        , el NextUI.row {} $ el NextUI.text { size: "$xl" } "A fast, powerful functional language"
+                        ]
+                    , el NextUI.col { align: "center", content: "center", css: css { height: "100%"}} 
+                        $ el NextUI.button { shadow: false, color: "primary", css: css { minHeight: "5rem", minWidth: "50%" }, onClick: dispatchRoute "/getting-started" }
+                        $ el NextUI.text { size: "$3xl", color: "secondary", css: css { fontWeight: "$bold" } } "Get started"
+                    ]
+
+            ]
 
 fetchData :: forall ctx. ctx -> Aff Props
 fetchData _ = do
