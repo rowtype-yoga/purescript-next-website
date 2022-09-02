@@ -52,11 +52,16 @@ mkLight = createTheme
   { "type": "light"
   , theme:
       { colors:
-          { primaryLight: "$blue200"
+          { theme1: "#6F04D9"
+          , theme2: "#1B0273"
+          , theme3: "#3866F2"
+          , theme4: "#0597F2"
+          , theme5: "#05C7F2"
+          , primaryLight: "$blue200"
           , primaryLightHover: "$purple300"
           , primaryLightActive: "$blue400"
           , primaryLightContrast: "$blue600"
-          , primary: "$black200"
+          , primary: "$theme1"
           , primaryBorder: "$blue300"
           , primaryBorderHover: "$blue600"
           , primarySolidHover: "$blue400"
@@ -65,6 +70,9 @@ mkLight = createTheme
           , gradient: "linear-gradient(112deg, $blue100 -25%, $pink500 -10%, $purple500 80%)"
           , link: "$black100"
           , neutral: "$blue900"
+          , codeLight: "rgba(255,255,255,0.8)"
+          , code: "$black"
+          , overlay: "rgba(255,255,255,0.6)"
           }
       , space: {}
       , fonts:
