@@ -24,7 +24,7 @@ mkHome :: Page.Component Props
 mkHome = do
   Page.component "Home" \env props ->
     React.do
-      { theme } <- NextUI.useTheme
+      { theme, isDark } <- NextUI.useTheme
       router <- Router.useRouter
       let
         dispatchRoute = Router.push router
@@ -50,8 +50,8 @@ mkHome = do
                         ]
                     , R.div { style: css { display: "flex", alignItems: "center"} }
                         $ R.div {}
-                        $ el NextUI.button { shadow: false, css: css { minHeight: "5rem", padding: "3rem"}, onClick: dispatchRoute "/getting-started" }
-                        $ el NextUI.text { size: "$3xl", color: "white", css: css { fontWeight: "$bold" } } "Get started"
+                        $ el NextUI.button { shadow: false, css: css { minHeight: "5rem", padding: "3rem", background: if isDark then "$theme4" else "$theme1"}, onClick: dispatchRoute "/getting-started" }
+                        $ el NextUI.text { size: "$3xl", color: "white", css: css { fontWeight: "$bold"} } "Get started"
                     ]
             ]
 
