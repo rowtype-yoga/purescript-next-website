@@ -32,6 +32,7 @@ import Next.Router (query, useRouter)
 import Next.Router as Router
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
+import React.Basic.DOM as DOM
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.DOM.Simplified.Generated as R
 import React.Basic.Events (handler)
@@ -190,7 +191,7 @@ mkPackages = do
   renderSearchResult :: SearchResult -> JSX
   renderSearchResult { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
     [ el NextUI.row {}
-        [ el NextUI.card {css: css { background: "$overlay" }}
+        [ el NextUI.card { css: css { background: "$overlay" } }
             [ el NextUI.cardHeader {} [ renderDeclaration title ]
             , el NextUI.cardBody {}
                 [ flip (maybe React.empty) maybeTypeText \typeText -> React.fragment
@@ -209,10 +210,30 @@ mkPackages = do
     , el NextUI.spacer { y: 1 } React.empty
     ]
 
-  renderSearchResult { info: Package { deprecated }, package } = el NextUI.row {}
-    [ el NextUI.col {} $ el NextUI.link { href: "/packages/" <> package } $ package -- TODO: Use router
-    , el NextUI.col {} $ if deprecated then "deprecated" else ""
+  renderSearchResult p@{ info: Package { deprecated }, package, version } = React.fragment
+    [ el NextUI.row {}
+        [ el NextUI.card { css: css { background: "$overlay" } }
+            [ el NextUI.cardHeader {} $
+                  el NextUI.gridContainer {} [
+                    el NextUI.grid { xs: 12 } $ renderPackage package
+                  , if true then el NextUI.grid { xs: 12 } $ el NextUI.text {} "deprecated" else React.empty
+                  ]
+            , el NextUI.cardBody {}
+              $ R.div { style: css { display: "flex", direction: "row"} }
+                    [ DOM.text "Latest version: "
+                    , el NextUI.link { href: "/packages/" <> package <> "/" <> version } $ version
+                    ]
+            -- , el NextUI.cardFooter {}
+            --     [ renderPackage package
+            --     , el NextUI.spacer { x: 1 } React.empty
+            --     , renderModule m
+            --     ]
+            ]
+        ]
+    , el NextUI.spacer { y: 1 } React.empty
     ]
+    where
+    _ = spy "package" p
   renderSearchResult { info: Module { "module": m }, package } = el NextUI.row {}
     [ el NextUI.col {} package
     , el NextUI.col {} $ m
@@ -229,10 +250,10 @@ mkPackages = do
   renderModule name = React.fragment [ icon_ tbBook2, el NextUI.text {} name ]
 
   renderPackage :: String -> JSX
-  renderPackage name = React.fragment [ icon_ tbPackage, el NextUI.text {} name ]
+  renderPackage package = React.fragment [ icon_ tbPackage, el NextUI.link { href: "/packages/" <> package, css: css { padding: "0.5rem" } } package ]
 
   renderDeclaration :: String -> JSX
-  renderDeclaration name = React.fragment [ icon_ tbMathFunction, el NextUI.text { css: css { padding: "0.5rem"}} name ]
+  renderDeclaration name = React.fragment [ icon_ tbMathFunction, el NextUI.text { css: css { padding: "0.5rem" } } name ]
 
 -- getServerSideProps :: forall ctx. EffectFn1 ctx (Promise { props :: Props })
 -- getServerSideProps =

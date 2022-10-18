@@ -14,6 +14,7 @@ import Effect.Uncurried (EffectFn1, mkEffectFn1)
 import NextUI.NextUI (nextThemesProvider, nextUIProvider)
 import NextUI.NextUI as NextUI
 import React.Basic as R
+import React.Basic.DOM (css)
 import React.Basic.Hooks as React
 import React.Util (el)
 import Themes as Themes
@@ -27,7 +28,7 @@ type AppProps props =
 mkApp :: forall props. Effect (EffectFn1 (AppProps props) React.JSX)
 mkApp = do
   context /\ settingsProvider <- mkSettingsProvider
-  let pursuitUrl = "http://localhost:3000"
+  let pursuitUrl = "https://pursuit.purescript.org"
   loading <- mkLoading
   pure
     $ mkEffectFn1 \props ->

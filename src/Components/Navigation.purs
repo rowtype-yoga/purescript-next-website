@@ -39,7 +39,7 @@ mkBackgroundImage isDark =
       """
   else
     """
-      radial-gradient(40% 40% at 20% 60%, #3866F233 8%, #FFFFFF00 100%),radial-gradient(75% 75% at 75% 25%, #6F04D922 8%, #05C7F200 100%),linear-gradient(152deg, #FFFFFFFF 22%, #05C7F255 100%);
+      radial-gradient(40% 40% at 20% 60%, #3866F233 8%, #FFFFFF00 100%),radial-gradient(75% 75% at 75% 25%, #6F04D922 8%, #05C7F200 100%),linear-gradient(152deg, #FFFFFFFF 22%, #05C7F255 100%)
       """
 
 foreign import isDarkDefault_ :: Effect Boolean
@@ -67,7 +67,7 @@ navigation = do
           bodyElem <- runMaybeT do
             body <- MaybeT $ Doc.body htmlDocument
             pure $ toElement body
-          maybe (pure unit) (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark)) bodyElem
+          maybe (pure unit) (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:scroll;" )) bodyElem
           pure mempty
         Nothing -> pure mempty
     pure $ el NextUI.navbar { isBordered: isDark, variant: "static" }
@@ -109,4 +109,4 @@ navigation = do
       , isActive
       , variant: "underline"
       }
-      $ el NextUI.text { size: "$xl", color: "neutral" } title
+      $ el NextUI.text { size: "$2xl", color: "neutral" } title
