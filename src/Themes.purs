@@ -16,6 +16,7 @@ mkDark = createTheme
       { colors:
           { theme1: "#6F04D9"
           , theme2: "#1B0273"
+          , theme2a: "#1B0273AA"
           , theme3: "#3866F2"
           , theme4: "#0597F2"
           , theme5: "#05C7F2"
@@ -54,6 +55,7 @@ mkLight = createTheme
       { colors:
           { theme1: "#6F04D9"
           , theme2: "#1B0273"
+          , theme2a: "#1B0273AA"
           , theme3: "#3866F2"
           , theme4: "#0597F2"
           , theme5: "#05C7F2"

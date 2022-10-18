@@ -30,6 +30,7 @@ import Network.RemoteData (RemoteData)
 import Network.RemoteData as RD
 import Next.Router (query, useRouter)
 import Next.Router as Router
+import NextUI.NextUI (useTheme)
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM as DOM
@@ -141,6 +142,7 @@ mkPackages = do
   Page.component "Packages" \{ pursuitUrl } props -> React.do
     state /\ dispatch ← React.useReducer defaultState reducer
     buttonState /\ setButtonState <- useState' Select.All
+    { theme, isDark } <- useTheme
     router <- useRouter
     let
       q :: { q :: String }
@@ -155,7 +157,7 @@ mkPackages = do
       if state.searchInput /= "" then load { searchQuery: state.searchInput } else pure unit
       mempty
 
-    pure $ el NextUI.container {} $
+    pure $ el NextUI.container { css: css { background: if isDark then "$theme2a" else "$codeLight", borderRadius: "0.5rem"} } $
       [ el NextUI.row {} $ R.h1' "Packages"
       , el NextUI.row {}
           [ el NextUI.input
@@ -175,7 +177,7 @@ mkPackages = do
           ]
       , el NextUI.spacer { y: 1 } React.empty
       , el NextUI.row {} $ el NextUI.container { gap: 0, direction: "column" }
-          $ renderSearchResults
+          $ renderSearchResults { isDark }
           $ state.searchResult <#> Array.filter (isVisible buttonState)
 
       ]
@@ -188,11 +190,11 @@ mkPackages = do
   isVisible Select.Package { info: Package _ } = true
   isVisible _ _ = false
 
-  renderSearchResult :: SearchResult -> JSX
-  renderSearchResult { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
+  renderSearchResult :: { isDark :: Boolean} -> SearchResult -> JSX
+  renderSearchResult { isDark } { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
     [ el NextUI.row {}
-        [ el NextUI.card { css: css { background: "$overlay" } }
-            [ el NextUI.cardHeader {} [ renderDeclaration title ]
+        [ el NextUI.card { css: css { background: "$overlay"} }
+            [ el NextUI.cardHeader { css: css { paddingBottom: "0rem"}} [ renderDeclaration title ]
             , el NextUI.cardBody {}
                 [ flip (maybe React.empty) maybeTypeText \typeText -> React.fragment
                     [ R.code {} typeText
@@ -200,7 +202,7 @@ mkPackages = do
                     ]
                 , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ text
                 ]
-            , el NextUI.cardFooter {}
+            , el NextUI.cardFooter { css: css { paddingTop: "0rem" }}
                 [ renderPackage package
                 , el NextUI.spacer { x: 1 } React.empty
                 , renderModule m
@@ -210,7 +212,7 @@ mkPackages = do
     , el NextUI.spacer { y: 1 } React.empty
     ]
 
-  renderSearchResult p@{ info: Package { deprecated }, package, version } = React.fragment
+  renderSearchResult { isDark } p@{ info: Package { deprecated }, package, version } = React.fragment
     [ el NextUI.row {}
         [ el NextUI.card { css: css { background: "$overlay" } }
             [ el NextUI.cardHeader {} $
@@ -234,17 +236,17 @@ mkPackages = do
     ]
     where
     _ = spy "package" p
-  renderSearchResult { info: Module { "module": m }, package } = el NextUI.row {}
+  renderSearchResult { isDark } { info: Module { "module": m }, package } = el NextUI.row {}
     [ el NextUI.col {} package
     , el NextUI.col {} $ m
     ]
 
-  renderSearchResults :: RD.RemoteData SearchError (Array SearchResult) -> Array JSX
-  renderSearchResults (RD.Success []) = Array.singleton $ el NextUI.row {} $ el NextUI.text {} "No package found"
-  renderSearchResults (RD.Success searchResults) = searchResults <#> renderSearchResult
-  renderSearchResults (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text { color: "error" } "Uh oh"
-  renderSearchResults RD.Loading = Array.singleton $ el NextUI.row {} $ el NextUI.loading {} React.empty
-  renderSearchResults RD.NotAsked = Array.singleton $ el NextUI.row {} $ el NextUI.text {} ""
+  renderSearchResults :: { isDark :: Boolean } -> RD.RemoteData SearchError (Array SearchResult) -> Array JSX
+  renderSearchResults _ (RD.Success []) = Array.singleton $ el NextUI.row {} $ el NextUI.text {} "No package found"
+  renderSearchResults settings (RD.Success searchResults) = searchResults <#> renderSearchResult settings
+  renderSearchResults _ (RD.Failure err) = Array.singleton $ el NextUI.row {} $ el NextUI.text { color: "error" } "Uh oh"
+  renderSearchResults _ RD.Loading = Array.singleton $ el NextUI.row {} $ el NextUI.loading {} React.empty
+  renderSearchResults _ RD.NotAsked = Array.singleton $ el NextUI.row {} $ el NextUI.text {} ""
 
   renderModule :: String -> JSX
   renderModule name = React.fragment [ icon_ tbBook2, el NextUI.text {} name ]
