@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev -p 4040",
-    "build": "next build",
+    "build": "npm run build:spago && npm run build:next",
+    "build:spago": "spago build",
+    "build:next": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "//vercel:install": "npm install -g purescript@0.15.6 spago && npm install",
+    "//vercel:build": "npm run build:spago && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +23,7 @@
     "@nextui-org/react": "^1.0.0-beta.10",
     "next": "^12.2.5",
     "next-themes": "^0.2.0",
+    "purescript": "0.15.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
