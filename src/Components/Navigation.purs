@@ -4,12 +4,12 @@ module Components.Navigation
   ) where
 
 import Prelude
-import Web.HTML.HTMLElement (toElement)
 
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Traversable (traverse_)
 import Effect (Effect)
+import Effect.Unsafe (unsafePerformEffect)
 import Next.Router (useRouter)
 import Next.Router as Router
 import NextUI.NextUI (switch, useNextTheme, useTheme)
@@ -28,6 +28,7 @@ import Web.DOM.Element as DOMEL
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (toDocument)
 import Web.HTML.HTMLDocument as Doc
+import Web.HTML.HTMLElement (toElement)
 import Web.HTML.Window (document)
 
 -- radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(30, 144, 255,0.5) 0% 10%,#0000 90% 90%),
@@ -52,8 +53,8 @@ navigation = do
     { setTheme } <- useNextTheme
     router <- useRouter
     let
-      dispatchRoute = Router.push router
-      currentRoute = Router.route router
+      dispatchRoute = flip Router.push_ router
+      currentRoute = Router.asPath router
 
       setDark false = setTheme "light"
       setDark true = setTheme "dark"
@@ -77,9 +78,9 @@ navigation = do
               }
           $ icon siPurescript { size: "3rem" }
       , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
-          [ { onClick: dispatchRoute "/getting-started", title: "Getting started", isActive: currentRoute == "/getting-started" }
-          , { onClick: dispatchRoute "/try", title: "Try", isActive: currentRoute == "/try" }
-          , { onClick: dispatchRoute "/packages", title: "Packages", isActive: currentRoute == "/packages" }
+          [ { onClick: dispatchRoute "/getting-started", title: "Getting started", isActive: unsafePerformEffect currentRoute == "/getting-started" }
+          , { onClick: dispatchRoute "/try", title: "Try", isActive: unsafePerformEffect currentRoute == "/try" }
+          , { onClick: dispatchRoute "/packages", title: "Packages", isActive: unsafePerformEffect currentRoute == "/packages" }
           ]
       , el NextUI.navbarContent {}
           [ el NextUI.navbarLink
