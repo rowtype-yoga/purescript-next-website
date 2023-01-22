@@ -1,8 +1,5 @@
-html, body {
-    height: 100vh
-}
-
-#__next {
-    overflow: scroll;
-    max-height: 100%;
+html,
+body,
+div#__next {
+    height: 100%;
 }
