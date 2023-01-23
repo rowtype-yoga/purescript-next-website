@@ -7,7 +7,7 @@ import Prelude
 
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Maybe (Maybe(..), maybe)
-import Data.Traversable (traverse_)
+import Data.Traversable (for_, traverse_)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Next.Router (useRouter)
@@ -68,7 +68,7 @@ navigation = do
           bodyElem <- runMaybeT do
             body <- MaybeT $ Doc.body htmlDocument
             pure $ toElement body
-          maybe (pure unit) (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:scroll;" )) bodyElem
+          for_ bodyElem (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:fixed;" )) 
           pure mempty
         Nothing -> pure mempty
     pure $ el NextUI.navbar { isBordered: isDark, variant: "static" }
@@ -98,7 +98,7 @@ navigation = do
               , target: "_blank"
               }
               $ icon siGithub { style: css { color: "neutral" }, size: "1.5rem" }
-          , el switch { checked: isDark, css: css { color: "neutral"}, onChange: handler targetChecked $ traverse_ setDark } ""
+          , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
 
           ]
       , el NextUI.navbarToggle { hideIn: "mdMax"} React.empty -- [TODO] Find out why it is not hiding

@@ -28,7 +28,7 @@ type AppProps props =
 mkApp :: forall props. Effect (EffectFn1 (AppProps props) React.JSX)
 mkApp = do
   context /\ settingsProvider <- mkSettingsProvider
-  let pursuitUrl = "https://pursuit.purescript.org"
+  let pursuitUrl = "http://localhost:8080"
   loading <- mkLoading
   pure
     $ mkEffectFn1 \props ->

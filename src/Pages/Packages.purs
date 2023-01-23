@@ -11,8 +11,10 @@ import Components.Page as Page
 import Components.Select as Select
 import Control.Monad.Except (except)
 import Data.Array as Array
+import Data.Bifunctor (lmap)
 import Data.Either (Either(..), either)
 import Data.Eq.Generic (genericEq)
+import Data.Foldable (foldMap)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe, fromMaybe, maybe)
 import Data.Show.Generic (genericShow)
@@ -20,7 +22,7 @@ import Data.Tuple.Nested ((/\))
 import Debug (spy)
 import Effect.Aff (Aff, Milliseconds(..), attempt, delay)
 import Effect.Class (liftEffect)
-import Effect.Class.Console (log)
+import Effect.Class.Console (log, logShow)
 import Fetch (Method(..), fetch)
 import Fetch.Yoga.Json (fromJSON)
 import Foreign (ForeignError(..))
@@ -46,6 +48,7 @@ import React.Util (el)
 import Yoga.JSON (class ReadForeign)
 import Yoga.JSON as JSON
 import Yoga.JSON as YogaJson
+import Yoga.JSON.Error (renderHumanError)
 
 type Props =
   { header :: String
@@ -86,18 +89,18 @@ type SearchResult =
   , markup :: String
   , package :: String
   , text :: String
-  , url :: String
+  -- , url :: String
   , version :: String
   }
 
-data SearchError = SearchError
+data SearchError = SearchError String
 
 derive instance Generic SearchError _
 instance Eq SearchError where
   eq = genericEq
 
 instance Show SearchError where
-  show SearchError = "Failed to get search results"
+  show (SearchError e) = "Failed to get search results: " <> e
 
 data Action = EditSearchField String | UpdateSearchResult (RemoteData SearchError (Array SearchResult))
 
@@ -116,7 +119,7 @@ reduce s (EditSearchField "") = s { searchInput = "", searchResult = RD.NotAsked
 reduce s (EditSearchField searchInput) = s { searchInput = searchInput }
 
 getSearchResult :: String -> { searchQuery :: String } -> Aff (Either SearchError (Array SearchResult))
-getSearchResult baseUrl { searchQuery } = mapAffErrorToSearchError $ do
+getSearchResult baseUrl { searchQuery } = do
   let query = maybe searchQuery identity $ encodeURIComponent searchQuery
   let url = baseUrl <> "/search?q=" <> query
   { status, text, json } ← fetch url
@@ -125,15 +128,14 @@ getSearchResult baseUrl { searchQuery } = mapAffErrorToSearchError $ do
     }
   case status of
     200 -> do
-      searchResult :: Array SearchResult <- fromJSON json
-      pure $ Right searchResult
+      searchResult :: Either SearchError (Array SearchResult) <- json <#> YogaJson.read <#> lmap (foldMap renderHumanError >>> SearchError)
+      either (logShow) (const $ pure unit) searchResult
+      pure searchResult
     statusCode -> do
       body <- text
-      log $ "Got invalid response [" <> (show statusCode) <> "]:\n" <> body
-      pure $ Left SearchError
-  where
-  mapAffErrorToSearchError aff =
-    (either (pure $ Left SearchError) (identity)) <$> (attempt aff)
+      let e = "Got invalid response [" <> (show statusCode) <> "]:\n" <> body
+      log e
+      pure $ Left $ SearchError e
 
 mkPackages :: Page.Component Props
 mkPackages = do
