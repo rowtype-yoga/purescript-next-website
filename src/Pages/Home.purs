@@ -27,7 +27,7 @@ mkHome = do
       { theme, isDark } <- NextUI.useTheme
       router <- Router.useRouter
       let
-        dispatchRoute = Router.push router
+        dispatchRoute = flip Router.push_ router
       pure $ el NextUI.container { display: "flex", css: css { minHeight: "70vh" }, alignItems: "center" }
         $ el NextUI.card
             { css: css { height: "100%", background: "$overlay", position: "relative", top: "50%" }
@@ -35,7 +35,7 @@ mkHome = do
             [ el NextUI.cardBody {}
                 $ el NextUI.container { display: "flex", justify: "space-evenly"}
                     [ R.div {} $ el NextUI.container { display: "flex", direction:"column" }
-                        [ R.div { style: css {display: "flex", alignItems: "center" } } 
+                        [ R.div { style: css {display: "flex", alignItems: "center" } }
                             [ icon siPurescript { style: css { color: "primary", strokeWidth: "0.5", fontSize: "6rem" } }
                             , el NextUI.spacer {} React.empty
                             , el NextUI.text

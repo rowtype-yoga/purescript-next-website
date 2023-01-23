@@ -10,18 +10,30 @@ in  upstream
     }
   with nextjs =
     { repo = "https://github.com/rowtype-yoga/purescript-nextjs.git"
-    , version = "108fbcd0e45498c3ccdd07c0380420a269d85ca4" -- [todo] update to latest version
+    , version = "c1e155f60fdd2365f4545746de6c93989d76a49b"
     , dependencies =
       [ "aff"
       , "aff-promise"
       , "console"
+      , "datetime"
       , "effect"
+      , "either"
+      , "foldable-traversable"
+      , "foreign"
+      , "foreign-object"
       , "functions"
+      , "identity"
       , "maybe"
       , "nullable"
+      , "options"
+      , "partial"
       , "prelude"
       , "react-basic"
       , "react-basic-hooks"
+      , "transformers"
+      , "typelevel-prelude"
+      , "unsafe-coerce"
+      , "yoga-json"
       ]
     }
   with yoga-json = upstream.yoga-json // { version = "v4.0.1" }

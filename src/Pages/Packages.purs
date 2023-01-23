@@ -1,7 +1,7 @@
 module Pages.Packages
   (
     -- getServerSideProps
-    -- , 
+    -- ,
     mkPackages
   ) where
 
@@ -14,7 +14,7 @@ import Data.Array as Array
 import Data.Either (Either(..), either)
 import Data.Eq.Generic (genericEq)
 import Data.Generic.Rep (class Generic)
-import Data.Maybe (Maybe, maybe)
+import Data.Maybe (Maybe, fromMaybe, maybe)
 import Data.Show.Generic (genericShow)
 import Data.Tuple.Nested ((/\))
 import Debug (spy)
@@ -44,6 +44,7 @@ import React.Icons (icon_)
 import React.Icons.Tb (tbBook2, tbMathFunction, tbPackage, tbSearch)
 import React.Util (el)
 import Yoga.JSON (class ReadForeign)
+import Yoga.JSON as JSON
 import Yoga.JSON as YogaJson
 
 type Props =
@@ -146,9 +147,9 @@ mkPackages = do
     router <- useRouter
     let
       q :: { q :: String }
-      q = query router
+      q = query router # JSON.read_ # fromMaybe {q: ""}
 
-      dispatchRoute = Router.push router
+      dispatchRoute = flip Router.push_ router
       debounce = delay (Milliseconds 200.0)
 
     { load } ← useRemoteDataDispatch (dispatch <<< UpdateSearchResult) \query -> debounce *> getSearchResult pursuitUrl query
