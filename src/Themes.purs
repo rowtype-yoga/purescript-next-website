@@ -75,7 +75,7 @@ mkLight = createTheme
           , neutral: "$blue900"
           , codeLight: "rgba(255,255,255,0.8)"
           , code: "$black"
-          , overlay: "rgba(255,255,255,0.6)"
+          , overlay: "rgba(255,255,255,0.4)"
           }
       , space: {}
       , fonts:
