@@ -35,7 +35,7 @@ mkDark = createTheme
           , gradient: "linear-gradient(135deg, $theme1 20%, #1B027300 80%)"
           , link: "$gray900"
           , neutral: "$gray900"
-          , background: "$black"
+          , background: "$white"
           , codeLight: "rgba(0,0,0,0.2)"
           , code: "$white"
           , overlay: "rgba(0,0,0,0.2)"
