@@ -21,7 +21,7 @@ mkGettingStarted :: Page.Component Props
 mkGettingStarted = do
 
   Page.component "GettingStarted" \env props -> React.do
-    pure $ el NextUI.container {} $
+    pure $ el NextUI.container { gap: 0, lg: true} $
       [ el NextUI.row {} $ R.h1' "Getting Started"
       ]
 
