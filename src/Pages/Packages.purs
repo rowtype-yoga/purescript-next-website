@@ -194,7 +194,7 @@ mkPackages = do
   isVisible _ _ = false
 
   renderSearchResult :: { isDark :: Boolean} -> SearchResult -> JSX
-  renderSearchResult { isDark } { info: Declaration { "module": m, title, typeText: maybeTypeText, typeOrValue }, text, package } = React.fragment
+  renderSearchResult { isDark } { info: Declaration { "module": m, title, typeText: maybeTypeText }, text, package } = React.fragment
     [ el NextUI.row {}
         [ el NextUI.card { css: css { background: "$overlay"} }
             [ el NextUI.cardHeader { css: css { paddingBottom: "0rem"}} [ renderDeclaration title ]
