@@ -3,7 +3,9 @@ module Pages.Document (mkDocument) where
 import Prelude
 
 import Next.Document as N
+import React.Basic.DOM (css)
 import React.Basic.DOM as R
+import React.Basic.DOM.Simplified.Generated as RS
 import React.Basic.Hooks as React
 
 mkDocument :: forall props. React.Component props
@@ -23,7 +25,8 @@ mkDocument = React.component "Document" \_ -> do
           , R.body
               { className: "font-sans antialiased leading-normal tracking-wider bg-slate-200"
               , children:
-                  [ N.main {}
+                  [ RS.div { id: "background-container" } React.empty
+                  , N.main {}
                   , N.nextScript {}
                   ]
               }

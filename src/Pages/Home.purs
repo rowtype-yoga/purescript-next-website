@@ -28,14 +28,14 @@ mkHome = do
       router <- Router.useRouter
       let
         dispatchRoute = flip Router.push_ router
-      pure $ el NextUI.container { display: "flex", css: css { minHeight: "70vh" }, alignItems: "center" }
-        $ el NextUI.card
-            { css: css { height: "100%", background: "$overlay", position: "relative", top: "50%" }
+      pure $ el NextUI.container { gap: 0, lg: true, css: css {display: "flex", alignItems: "center", height:  "calc(100vh - 100px)"}}
+        [ el NextUI.card
+            { css: css { background: "$overlay", position: "relative", marginBottom: "50px" }
             }
             [ el NextUI.cardBody {}
-                $ el NextUI.container { display: "flex", justify: "space-evenly"}
-                    [ R.div {} $ el NextUI.container { display: "flex", direction:"column" }
-                        [ R.div { style: css {display: "flex", alignItems: "center" } }
+                $ el NextUI.container { display: "flex", justify: "space-evenly" }
+                    [ R.div {} $ el NextUI.container { display: "flex", direction: "column" }
+                        [ R.div { style: css { display: "flex", alignItems: "center" } }
                             [ icon siPurescript { style: css { color: "primary", strokeWidth: "0.5", fontSize: "6rem" } }
                             , el NextUI.spacer {} React.empty
                             , el NextUI.text
@@ -48,12 +48,13 @@ mkHome = do
                             ]
                         , R.div {} $ el NextUI.text { h2: true, size: "$2xl", weight: "normal" } "A fast and elegant functional programming language"
                         ]
-                    , R.div { style: css { display: "flex", alignItems: "center"} }
+                    , R.div { style: css { display: "flex", alignItems: "center" } }
                         $ R.div {}
-                        $ el NextUI.button { shadow: false, css: css { minHeight: "5rem", padding: "3rem", background: if isDark then "$theme4" else "$theme1"}, onClick: dispatchRoute "/getting-started" }
-                        $ el NextUI.text { size: "$3xl", color: "white", css: css { fontWeight: "$bold"} } "Get started"
+                        $ el NextUI.button { shadow: false, css: css { minHeight: "5rem", padding: "3rem", background: if isDark then "$theme4" else "$theme1" }, onClick: dispatchRoute "/getting-started" }
+                        $ el NextUI.text { size: "$3xl", color: "white", css: css { fontWeight: "$bold" } } "Get started"
                     ]
             ]
+        ]
 
 fetchData :: forall ctx. ctx -> Aff Props
 fetchData _ = do

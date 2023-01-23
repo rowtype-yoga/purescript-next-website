@@ -160,7 +160,7 @@ mkPackages = do
       if state.searchInput /= "" then load { searchQuery: state.searchInput } else pure unit
       mempty
 
-    pure $ el NextUI.container { css: css { background: if isDark then "$theme2a" else "$codeLight", borderRadius: "0.5rem"} } $
+    pure $ el NextUI.container { css: css { background: if isDark then "$theme2a" else "$codeLight", borderRadius: "0.5rem", height: "100%"}, lg: true, gap: 0 } $
       [ el NextUI.row {} $ R.h1' "Packages"
       , el NextUI.row {}
           [ el NextUI.input
@@ -179,7 +179,7 @@ mkPackages = do
           , select { selected: buttonState, onSelect: setButtonState }
           ]
       , el NextUI.spacer { y: 1 } React.empty
-      , el NextUI.row {} $ el NextUI.container { gap: 0, direction: "column" }
+      , el NextUI.container { gap: 0, direction: "column", css: css { height: "100%" } }
           $ renderSearchResults { isDark }
           $ state.searchResult <#> Array.filter (isVisible buttonState)
 

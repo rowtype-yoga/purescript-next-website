@@ -47,8 +47,8 @@ mkApp = do
                 }
             $ el nextUIProvider {}
                 [ nav unit
-                , el NextUI.spacer { y: 3 } R.empty
-                , el NextUI.container {}
+                , el NextUI.spacer { y: 1 } R.empty
+                , el NextUI.container { css: css { minHeight: "calc(100% - 100px)"}} 
                     [ loading unit
                     , component props.pageProps
                     ]

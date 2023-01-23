@@ -8,6 +8,7 @@ import Prelude
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Traversable (for_, traverse_)
+import Debug (spy)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Next.Router (useRouter)
@@ -25,8 +26,9 @@ import React.Util (el)
 import Themes (getColorValue)
 import Web.DOM.Document (documentElement)
 import Web.DOM.Element as DOMEL
+import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
-import Web.HTML.HTMLDocument (toDocument)
+import Web.HTML.HTMLDocument (toDocument, toNonElementParentNode)
 import Web.HTML.HTMLDocument as Doc
 import Web.HTML.HTMLElement (toElement)
 import Web.HTML.Window (document)
@@ -68,10 +70,12 @@ navigation = do
           bodyElem <- runMaybeT do
             body <- MaybeT $ Doc.body htmlDocument
             pure $ toElement body
-          for_ bodyElem (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:fixed;" )) 
+          maybeElement <-  getElementById "background-container" $ toNonElementParentNode htmlDocument
+          let _ = spy "elem" maybeElement
+          for_ maybeElement (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:fixed;" )) 
           pure mempty
         Nothing -> pure mempty
-    pure $ el NextUI.navbar { isBordered: isDark, variant: "static" }
+    pure $ el NextUI.navbar { isBordered: false, variant: "sticky" }
       [ el NextUI.navbarBrand { color: "neutral"}
           $ el NextUI.link
               { onClick: dispatchRoute $ "/"
@@ -79,7 +83,7 @@ navigation = do
           $ icon siPurescript { size: "3rem" }
       , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
           [ { onClick: dispatchRoute "/getting-started", title: "Getting started", isActive: unsafePerformEffect currentRoute == "/getting-started" }
-          , { onClick: dispatchRoute "/try", title: "Try", isActive: unsafePerformEffect currentRoute == "/try" }
+          -- , { onClick: dispatchRoute "/try", title: "Try", isActive: unsafePerformEffect currentRoute == "/try" }
           , { onClick: dispatchRoute "/packages", title: "Packages", isActive: unsafePerformEffect currentRoute == "/packages" }
           ]
       , el NextUI.navbarContent {}
