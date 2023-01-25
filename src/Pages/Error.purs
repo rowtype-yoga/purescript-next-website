@@ -2,11 +2,11 @@ module Pages.Error (mkError) where
 
 import Prelude
 
-import Components.Page as Page
 import React.Basic.DOM as R
+import React.Basic.Hooks as React
 
-mkError :: String -> Page.Component Unit
+mkError :: String -> React.Component Unit
 mkError msg = do
-  Page.component "Error" \_ _ -> pure render
+  React.component "Error" \_ -> pure render
   where
   render = R.h1_ [ R.text msg ]

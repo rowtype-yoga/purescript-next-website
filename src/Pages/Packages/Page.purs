@@ -1,14 +1,11 @@
 module Pages.Packages
-  (
-    -- getServerSideProps
-    -- ,
-    mkPackages
+  ( mkPage
   ) where
 
 import Prelude
 
-import Components.Page as Page
 import Components.Select as Select
+import Context.App as ContextApp
 import Control.Monad.Except (except)
 import Data.Array as Array
 import Data.Bifunctor (lmap)
@@ -20,11 +17,10 @@ import Data.Maybe (Maybe, fromMaybe, maybe)
 import Data.Show.Generic (genericShow)
 import Data.Tuple.Nested ((/\))
 import Debug (spy)
-import Effect.Aff (Aff, Milliseconds(..), attempt, delay)
+import Effect.Aff (Aff, Milliseconds(..), delay)
 import Effect.Class (liftEffect)
 import Effect.Class.Console (log, logShow)
 import Fetch (Method(..), fetch)
-import Fetch.Yoga.Json (fromJSON)
 import Foreign (ForeignError(..))
 import JSURI (encodeURIComponent)
 import Markdown.Markdown as Markdown
@@ -38,13 +34,13 @@ import React.Basic.DOM (css)
 import React.Basic.DOM as DOM
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.DOM.Simplified.Generated as R
+import React.Basic.DOM.Simplified.ToJSX (el)
 import React.Basic.Events (handler)
 import React.Basic.Hooks (JSX, mkReducer, useEffect, useState')
 import React.Basic.Hooks as React
 import React.Hooks.UseRemoteData (useRemoteDataDispatch)
 import React.Icons (icon_)
 import React.Icons.Tb (tbBook2, tbMathFunction, tbPackage, tbSearch)
-import React.Util (el)
 import Yoga.JSON (class ReadForeign)
 import Yoga.JSON as JSON
 import Yoga.JSON as YogaJson
@@ -137,19 +133,20 @@ getSearchResult baseUrl { searchQuery } = do
       log e
       pure $ Left $ SearchError e
 
-mkPackages :: Page.Component Props
-mkPackages = do
+mkPage :: React.Component Props
+mkPage = do
 
   reducer ← mkReducer reduce # liftEffect
   select <- Select.mkSelect
-  Page.component "Packages" \{ pursuitUrl } props -> React.do
+  React.component "Packages" \_props -> React.do
+    { pursuitUrl } <- React.useContext ContextApp.context
     state /\ dispatch ← React.useReducer defaultState reducer
     buttonState /\ setButtonState <- useState' Select.All
     { theme, isDark } <- useTheme
     router <- useRouter
     let
       q :: { q :: String }
-      q = query router # JSON.read_ # fromMaybe {q: ""}
+      q = query router # JSON.read_ # fromMaybe { q: "" }
 
       dispatchRoute = flip Router.push_ router
       debounce = delay (Milliseconds 200.0)
@@ -160,7 +157,7 @@ mkPackages = do
       if state.searchInput /= "" then load { searchQuery: state.searchInput } else pure unit
       mempty
 
-    pure $ el NextUI.container { css: css { background: if isDark then "$theme2a" else "$codeLight", borderRadius: "0.5rem", height: "100%"}, lg: true, gap: 0 } $
+    pure $ el NextUI.container { css: css { background: if isDark then "$theme2a" else "$codeLight", borderRadius: "0.5rem", height: "100%" }, lg: true, gap: 0 } $
       [ el NextUI.row {} $ R.h1' "Packages"
       , el NextUI.row {}
           [ el NextUI.input
@@ -193,11 +190,11 @@ mkPackages = do
   isVisible Select.Package { info: Package _ } = true
   isVisible _ _ = false
 
-  renderSearchResult :: { isDark :: Boolean} -> SearchResult -> JSX
+  renderSearchResult :: { isDark :: Boolean } -> SearchResult -> JSX
   renderSearchResult { isDark } { info: Declaration { "module": m, title, typeText: maybeTypeText }, text, package } = React.fragment
     [ el NextUI.row {}
-        [ el NextUI.card { css: css { background: "$overlay"} }
-            [ el NextUI.cardHeader { css: css { paddingBottom: "0rem"}} [ renderDeclaration title ]
+        [ el NextUI.card { css: css { background: "$overlay" } }
+            [ el NextUI.cardHeader { css: css { paddingBottom: "0rem" } } [ renderDeclaration title ]
             , el NextUI.cardBody {}
                 [ flip (maybe React.empty) maybeTypeText \typeText -> React.fragment
                     [ R.code {} typeText
@@ -205,7 +202,7 @@ mkPackages = do
                     ]
                 , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ text
                 ]
-            , el NextUI.cardFooter { css: css { paddingTop: "0rem" }}
+            , el NextUI.cardFooter { css: css { paddingTop: "0rem" } }
                 [ renderPackage package
                 , el NextUI.spacer { x: 1 } React.empty
                 , renderModule m
@@ -219,12 +216,12 @@ mkPackages = do
     [ el NextUI.row {}
         [ el NextUI.card { css: css { background: "$overlay" } }
             [ el NextUI.cardHeader {} $
-                  el NextUI.gridContainer {} [
-                    el NextUI.grid { xs: 12 } $ renderPackage package
+                el NextUI.gridContainer {}
+                  [ el NextUI.grid { xs: 12 } $ renderPackage package
                   , if true then el NextUI.grid { xs: 12 } $ el NextUI.text {} "deprecated" else React.empty
                   ]
             , el NextUI.cardBody {}
-              $ R.div { style: css { display: "flex", direction: "row"} }
+                $ R.div { style: css { display: "flex", direction: "row" } }
                     [ DOM.text "Latest version: "
                     , el NextUI.link { href: "/packages/" <> package <> "/" <> version } $ version
                     ]

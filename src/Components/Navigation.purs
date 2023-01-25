@@ -6,7 +6,7 @@ module Components.Navigation
 import Prelude
 
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..))
 import Data.Traversable (for_, traverse_)
 import Debug (spy)
 import Effect (Effect)
@@ -17,13 +17,12 @@ import NextUI.NextUI (switch, useNextTheme, useTheme)
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM.Events (targetChecked)
+import React.Basic.DOM.Simplified.ToJSX (el)
 import React.Basic.Events (handler)
-import React.Basic.Hooks (Component, component, useEffect)
+import React.Basic.Hooks (useEffect)
 import React.Basic.Hooks as React
 import React.Icons (icon)
 import React.Icons.Si (siDiscord, siDiscourse, siGithub, siPurescript)
-import React.Util (el)
-import Themes (getColorValue)
 import Web.DOM.Document (documentElement)
 import Web.DOM.Element as DOMEL
 import Web.DOM.NonElementParentNode (getElementById)
@@ -33,7 +32,6 @@ import Web.HTML.HTMLDocument as Doc
 import Web.HTML.HTMLElement (toElement)
 import Web.HTML.Window (document)
 
--- radial-gradient(20rem 20rem at left 15rem top 20rem, rgba(30, 144, 255,0.5) 0% 10%,#0000 90% 90%),
 mkBackgroundImage :: Boolean -> String
 mkBackgroundImage isDark =
   if isDark then
@@ -47,9 +45,9 @@ mkBackgroundImage isDark =
 
 foreign import isDarkDefault_ :: Effect Boolean
 
-navigation :: Component Unit
+navigation :: React.Component Unit
 navigation = do
-  component "Navbar" \_props -> React.do
+  React.component "Navbar" \_props -> React.do
 
     { theme, isDark } <- useTheme
     { setTheme } <- useNextTheme
@@ -70,13 +68,13 @@ navigation = do
           bodyElem <- runMaybeT do
             body <- MaybeT $ Doc.body htmlDocument
             pure $ toElement body
-          maybeElement <-  getElementById "background-container" $ toNonElementParentNode htmlDocument
+          maybeElement <- getElementById "background-container" $ toNonElementParentNode htmlDocument
           let _ = spy "elem" maybeElement
-          for_ maybeElement (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:fixed;" )) 
+          for_ maybeElement (DOMEL.setAttribute "style" ("background-image: " <> mkBackgroundImage isDark <> ";background-attachment:fixed;"))
           pure mempty
         Nothing -> pure mempty
     pure $ el NextUI.navbar { isBordered: false, variant: "sticky" }
-      [ el NextUI.navbarBrand { color: "neutral"}
+      [ el NextUI.navbarBrand { color: "neutral" }
           $ el NextUI.link
               { onClick: dispatchRoute $ "/"
               }
@@ -105,7 +103,7 @@ navigation = do
           , el switch { checked: isDark, onChange: handler targetChecked $ traverse_ setDark } ""
 
           ]
-      , el NextUI.navbarToggle { hideIn: "mdMax"} React.empty -- [TODO] Find out why it is not hiding
+      , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
       ]
   where
   mkLink theme { onClick, title, isActive } =

@@ -1,43 +1,39 @@
 module Pages.GettingStarted
-  (
-    -- getServerSideProps
-    -- , 
-    mkGettingStarted
+  ( mkPage
   ) where
 
 import Prelude
 
-import Components.Page as Page
 import Markdown.Markdown as Markdown
 import NextUI.NextUI as NextUI
-import React.Basic as React
 import React.Basic.DOM (css)
+import React.Basic.DOM.Simplified.ToJSX (el)
+import React.Basic.Hooks (Component, component, empty) as React
 import React.Icons (icon)
 import React.Icons.Si as SI
-import React.Util (el)
 
 type Props =
   { header :: String
   }
 
-mkGettingStarted :: Page.Component Props
-mkGettingStarted = do
+mkPage :: React.Component Props
+mkPage = do
 
-  Page.component "GettingStarted" \env props -> React.do
+  React.component "GettingStarted" \_props -> React.do
     pure $ el NextUI.container { gap: 0, lg: true } $
       [ el NextUI.row {} $ el NextUI.text { h1: true } "Getting Started"
-      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay"}} $ el NextUI.cardBody {}
+      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
           [ el NextUI.text { h2: true } "Installing PureScript"
           , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ gettingStartedText
           ]
       , el NextUI.spacer { y: 2 } React.empty
-      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay"}} $ el NextUI.cardBody {}
+      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
           [ el NextUI.text { h2: true } "Generating a new project"
           , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ generatingProjectText
 
           ]
       , el NextUI.spacer { y: 2 } React.empty
-      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay"}} $ el NextUI.cardBody {}
+      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
           [ el NextUI.row {} $ el NextUI.text { h2: true } "IDE support"
           , el NextUI.row {} $ el NextUI.text {} "PureScript support is available in the following editors:"
           , el NextUI.spacer { y: 1 } React.empty
