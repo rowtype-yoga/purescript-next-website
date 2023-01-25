@@ -6,8 +6,8 @@ import Data.Monoid (guard)
 import Data.Tuple.Nested ((/\))
 import Next.Router (onRouteChangeStart, routeChangeComplete, routeChangeError)
 import NextUI.NextUI as NextUI
+import React.Basic.DOM.Simplified.ToJSX (el)
 import React.Basic.Hooks as React
-import React.Util (el)
 
 mkLoading :: React.Component Unit
 mkLoading =

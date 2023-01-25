@@ -1,34 +1,31 @@
-module Pages.Home (mkHome, getServerSideProps) where
+module Pages.Page
+  ( mkPage
+  ) where
 
 import Prelude
 
-import Components.Page as Page
-import Control.Promise (Promise, fromAff)
-import Effect.Aff (Aff)
-import Effect.Uncurried (EffectFn1, mkEffectFn1)
 import Next.Router as Router
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM.Simplified.Generated as R
+import React.Basic.DOM.Simplified.ToJSX (el)
 import React.Basic.Hooks as React
 import React.Icons (icon)
 import React.Icons.Si (siPurescript)
-import React.Util (el)
-import Themes (getColorValue)
 
 type Props =
   { header :: String
   }
 
-mkHome :: Page.Component Props
-mkHome = do
-  Page.component "Home" \env props ->
+mkPage :: React.Component Props
+mkPage = do
+  React.component "Home" \props ->
     React.do
       { theme, isDark } <- NextUI.useTheme
       router <- Router.useRouter
       let
         dispatchRoute = flip Router.push_ router
-      pure $ el NextUI.container { gap: 0, lg: true, css: css {display: "flex", alignItems: "center", height:  "calc(100vh - 100px)"}}
+      pure $ el NextUI.container { gap: 0, lg: true, css: css { display: "flex", alignItems: "center", height: "calc(100vh - 100px)" } }
         [ el NextUI.card
             { css: css { background: "$overlay", position: "relative", marginBottom: "50px" }
             }
@@ -56,12 +53,3 @@ mkHome = do
             ]
         ]
 
-fetchData :: forall ctx. ctx -> Aff Props
-fetchData _ = do
-  pure { header: "Home" }
-
-getServerSideProps :: forall ctx. EffectFn1 ctx (Promise { props :: Props })
-getServerSideProps =
-  mkEffectFn1 $ fromAff
-    <<< map { props: _ }
-    <<< fetchData

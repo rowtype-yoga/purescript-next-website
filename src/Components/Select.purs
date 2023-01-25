@@ -5,18 +5,15 @@ module Components.Select
 
 import Prelude
 
-import Components.Page as Page
 import Data.Array as Array
 import Data.Eq.Generic (genericEq)
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (maybe)
-import Debug (spy)
 import Effect (Effect)
 import Effect.Uncurried (mkEffectFn1)
 import NextUI.NextUI as NextUI
-import React.Basic.DOM (css)
-import React.Basic.Events (handler_)
-import React.Util (el)
+import React.Basic.DOM.Simplified.ToJSX (el)
+import React.Basic.Hooks as React
 
 type Props =
   { selected :: Option
@@ -44,9 +41,9 @@ fromKey "Code" = Code
 fromKey "Package" = Package
 fromKey _ = All
 
-mkSelect :: Page.Component Props
+mkSelect :: React.Component Props
 mkSelect =
-  Page.component "Select" \_ { selected, onSelect } -> React.do
+  React.component "Select" \{ selected, onSelect } -> React.do
     pure
       $ el NextUI.container { justify: "flex-start" }
       $ el NextUI.dropdown { solid: true }
