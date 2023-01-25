@@ -5,6 +5,6 @@ let upstream =
 in  upstream
   with nextui =
     { repo = "https://github.com/rowtype-yoga/purescript-nextui.git"
-    , version = "main"
+    , version = "v0.2.0"
     , dependencies = [ "effect", "prelude", "react-basic-hooks" ]
     }
