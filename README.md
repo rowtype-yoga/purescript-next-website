@@ -1,11 +1,7 @@
 # PureScript Next Website
 
+A proof of concept of how a new, fresh Purescript website could look like.
 ## Development
-
-### Requirements
-
-- Checkout `rowtype-yoga/purescript-nextjs`
-- Checkout `rowtype-yoga/purescript-nextui`
 
 ### Install Dependencies
 
