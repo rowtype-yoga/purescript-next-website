@@ -8,3 +8,4 @@ in  upstream
     , version = "v0.2.0"
     , dependencies = [ "effect", "prelude", "react-basic-hooks" ]
     }
+  with react-markdown = ../purescript-react-markdown/spago.dhall as Location

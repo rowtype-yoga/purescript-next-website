@@ -4,32 +4,56 @@ module Pages.GettingStarted
 
 import Prelude
 
-import Markdown.Markdown as Markdown
+import Data.Nullable (Nullable)
+import Data.Nullable as Nullable
+import Data.String as Strings
+import Debug (spy)
+import Effect.Class.Console (log)
 import NextUI.NextUI as NextUI
 import React.Basic.DOM (css)
 import React.Basic.DOM.Simplified.ToJSX (el)
 import React.Basic.Hooks (Component, component, empty) as React
+import React.Basic.Hooks (JSX)
 import React.Icons (icon)
 import React.Icons.Si as SI
+import React.Markdown as Markdown
+import React.SyntaxHighlighter as SyntaxHighlighter
+import Web.DOM (Element)
 
 type Props =
   { header :: String
   }
 
+mkHighlighter :: React.Component { node :: Element, inline :: Boolean, className :: Nullable String, children :: Array JSX }
+mkHighlighter = do
+  log "Init highlighter"
+  -- SyntaxHighlighter.registerLanguage SyntaxHighlighter.syntaxHighlighter "haskell" SyntaxHighlighter.haskell
+  React.component "Highlighter" \{ className, children } -> React.do
+    let
+      language = className # Nullable.toMaybe <#> Strings.stripPrefix (Strings.Pattern "language-") # Nullable.toNullable
+
+    pure $ el SyntaxHighlighter.syntaxHighlighter { language, style: Nullable.notNull SyntaxHighlighter.docco, "PreTag": "div" } children
+
 mkPage :: React.Component Props
 mkPage = do
-
+  highlighter <- mkHighlighter
   React.component "GettingStarted" \_props -> React.do
     pure $ el NextUI.container { gap: 0, lg: true } $
       [ el NextUI.row {} $ el NextUI.text { h1: true } "Getting Started"
       , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
           [ el NextUI.text { h2: true } "Installing PureScript"
-          , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ gettingStartedText
+          , el Markdown.markdown { remarkPlugins: [ Markdown.gfm, Markdown.breaks ], components: { code: highlighter } } $ gettingStartedText
           ]
       , el NextUI.spacer { y: 2 } React.empty
       , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
           [ el NextUI.text { h2: true } "Generating a new project"
-          , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ generatingProjectText
+          , el Markdown.markdown { remarkPlugins: [ Markdown.gfm, Markdown.breaks ], components: { code: highlighter } } $ generatingProjectText
+
+          ]
+      , el NextUI.spacer { y: 2 } React.empty
+      , el NextUI.row {} $ el NextUI.card { css: css { background: "$overlay" } } $ el NextUI.cardBody {}
+          [ el NextUI.text { h2: true } "Your first program"
+          , el Markdown.markdown { remarkPlugins: [ Markdown.gfm, Markdown.breaks ], components: { code: highlighter } } $ firstProgramText
 
           ]
       , el NextUI.spacer { y: 2 } React.empty
@@ -64,14 +88,31 @@ generatingProjectText =
   """  
   Initialise a new project:
   ```bash
-  npm init -y
-  spago init
+npm init -y
+spago init
   ```
 
   Run your project:
   ```bash
-  spago run
-  # 🍝
+spago run
+> 🍝
   ```
   """
 
+firstProgramText ∷ String
+firstProgramText =
+  """  
+  Open src/Main.purs to inspect your first Purescript program:
+  ```purescript
+module Main where
+
+import Prelude
+
+import Effect (Effect)
+import Effect.Console (log)
+
+main :: Effect Unit
+main = do
+log "🍝"
+  ```
+  """

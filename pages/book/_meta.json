@@ -1,0 +1,17 @@
+{
+    "index": "Summary",
+    "chapter1": "Introduction",
+    "chapter2": "Getting Started",
+    "chapter3": "Functions and Records",
+    "chapter4": "Recursion, Maps And Folds",
+    "chapter5": "Pattern Matching",
+    "chapter6": "Type Classes",
+    "chapter7": "Applicative Validation",
+    "chapter8": "The Effect Monad",
+    "chapter9": "Asynchronous Effects",
+    "chapter10": "The Foreign Function Interface",
+    "chapter11": "Monadic Adventures",
+    "chapter12": "Canvas Graphics",
+    "chapter13": "Generative Testing",
+    "chapter14": "Domain-Specific Languages"
+}
