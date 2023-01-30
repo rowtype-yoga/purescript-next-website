@@ -13,6 +13,7 @@
   , "fetch-yoga-json"
   , "foldable-traversable"
   , "foreign"
+  , "functions"
   , "js-uri"
   , "maybe"
   , "newtype"
