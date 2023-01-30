@@ -23,7 +23,7 @@ import Effect.Class.Console (log, logShow)
 import Fetch (Method(..), fetch)
 import Foreign (ForeignError(..))
 import JSURI (encodeURIComponent)
-import Markdown.Markdown as Markdown
+import React.Markdown as Markdown
 import Network.RemoteData (RemoteData)
 import Network.RemoteData as RD
 import Next.Router (query, useRouter)
@@ -200,7 +200,7 @@ mkPage = do
                     [ R.code {} typeText
                     , el NextUI.spacer { y: 1 } React.empty
                     ]
-                , el Markdown.markdown { plugins: [ Markdown.gfm, Markdown.breaks ] } $ text
+                , el Markdown.markdown { remarkPlugins: [ Markdown.gfm, Markdown.breaks ] } $ text
                 ]
             , el NextUI.cardFooter { css: css { paddingTop: "0rem" } }
                 [ renderPackage package

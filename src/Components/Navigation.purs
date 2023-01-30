@@ -76,13 +76,14 @@ navigation = do
     pure $ el NextUI.navbar { isBordered: false, variant: "sticky" }
       [ el NextUI.navbarBrand { color: "neutral" }
           $ el NextUI.link
-              { onClick: dispatchRoute $ "/"
+              { href: "/"
               }
           $ icon siPurescript { size: "3rem" }
       , el NextUI.navbarContent { hideIn: "xs" } $ map (mkLink theme)
-          [ { onClick: dispatchRoute "/getting-started", title: "Getting started", isActive: unsafePerformEffect currentRoute == "/getting-started" }
-          -- , { onClick: dispatchRoute "/try", title: "Try", isActive: unsafePerformEffect currentRoute == "/try" }
-          , { onClick: dispatchRoute "/packages", title: "Packages", isActive: unsafePerformEffect currentRoute == "/packages" }
+          [ { href: "/getting-started", title: "Getting started", isActive: unsafePerformEffect currentRoute == "/getting-started" }
+           , { href: "https://try.purescript.org", title: "Try", isActive: unsafePerformEffect currentRoute == "/try" }
+          , { href: "/book", title: "Book", isActive: unsafePerformEffect currentRoute == "/book" }
+          , { href: "/packages", title: "Packages", isActive: unsafePerformEffect currentRoute == "/packages" }
           ]
       , el NextUI.navbarContent {}
           [ el NextUI.navbarLink
@@ -106,9 +107,9 @@ navigation = do
       , el NextUI.navbarToggle { hideIn: "mdMax" } React.empty -- [TODO] Find out why it is not hiding
       ]
   where
-  mkLink theme { onClick, title, isActive } =
+  mkLink theme { href, title, isActive } =
     el NextUI.navbarLink
-      { onClick
+      { href
       , isActive
       , variant: "underline"
       }

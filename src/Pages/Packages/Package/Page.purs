@@ -1,4 +1,4 @@
-module Pages.Package (mkPage) where
+module Pages.Packages.Package (mkPage) where
 
 import Prelude
 

@@ -43,7 +43,7 @@ mkPage = do
                                 }
                                 "PureScript "
                             ]
-                        , R.div {} $ el NextUI.text { h2: true, size: "$2xl", weight: "normal" } "A fast and elegant functional programming language"
+                        , R.div {} $ el NextUI.text { h2: true, size: "$2xl", weight: "normal" } "A clean and elegant functional programming language"
                         ]
                     , R.div { style: css { display: "flex", alignItems: "center" } }
                         $ R.div {}
